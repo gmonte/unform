@@ -193,7 +193,7 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
     submitForm() {
       handleSubmit()
     },
-  }))
+  }), [errors])
 
   return (
     <FormContext.Provider
