@@ -17,7 +17,7 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
   { initialData = {}, children, onSubmit },
   formRef
 ) => {
-  const [errors, setErrors] = useState<UnformErrors>({})
+  const [errors, setErrors] = useState<UnformErrors | object>({})
   const fields = useRef<UnformField[]>([])
 
   const getFieldByName = useCallback(
@@ -85,8 +85,11 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
     [getFieldByName, setFieldValue]
   )
 
-  const setFormErrors = useCallback((formErrors: object) => {
-    const parsedErrors = dot.dot(formErrors)
+  const setFormErrors = useCallback((formErrors: object, parse = true) => {
+    let parsedErrors = formErrors
+    if (parse) {
+      parsedErrors = dot.dot(formErrors)
+    }
 
     setErrors(parsedErrors)
   }, [])
@@ -169,8 +172,8 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
     getErrors() {
       return errors
     },
-    setErrors(formErrors) {
-      return setFormErrors(formErrors)
+    setErrors(formErrors, parse) {
+      return setFormErrors(formErrors, parse)
     },
     getData() {
       return parseFormData()

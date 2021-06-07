@@ -30,7 +30,7 @@ export interface UnformErrors {
 
 export interface UnformContext {
   initialData: Record<string, any>
-  errors: UnformErrors
+  errors: UnformErrors | object
   scopePath: string
   registerField<T>(field: UnformField<T>): void
   unregisterField: (name: string) => void
@@ -54,8 +54,8 @@ export interface FormHandles {
   getData(): Record<string, any>
   getFieldRef(fieldName: string): any
   setData(data: Record<string, any>): void
-  getErrors(): UnformErrors
-  setErrors(errors: Record<string, string>): void
+  getErrors(): UnformErrors | object
+  setErrors(errors: Record<string, string>, parse: boolean): void
   reset(data?: Record<string, any>): void
   submitForm(): void
 }
