@@ -1,26 +1,43 @@
 import {
   forwardRef,
   FormEvent,
-  useState,
   useRef,
+  useMemo,
   useCallback,
   useImperativeHandle,
   ForwardRefRenderFunction,
 } from 'react'
 
 import dot from 'dot-object'
+import create from 'zustand'
+import shallow from 'zustand/shallow'
 
 import { FormContext } from './Context'
-import { UnformErrors, UnformField, FormHandles, FormProps } from './types'
+import { StoreErrors, UnformField, FormHandles, FormProps } from './types'
 
-console.log('UNFORM FROM GITHUB!!')
+const errorAdapter = store => store
 
 const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
   { initialData = {}, children, onSubmit },
   formRef
 ) => {
-  const [errors, setErrors] = useState<UnformErrors | object>({})
   const fields = useRef<UnformField[]>([])
+
+  const errorsStore = useMemo(
+    () =>
+      create<StoreErrors>(set => ({
+        errors: {},
+        setErrors: errors => set(() => ({ errors })),
+        setFieldError: (id, value) =>
+          set(({ errors }) => ({ errors: { ...errors, [id]: value } })),
+      })),
+    []
+  )
+
+  const { setErrors, setFieldError, errors } = errorsStore(
+    errorAdapter,
+    shallow
+  )
 
   const getFieldByName = useCallback(
     fieldName =>
@@ -87,14 +104,17 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
     [getFieldByName, setFieldValue]
   )
 
-  const setFormErrors = useCallback((formErrors: object, parse = true) => {
-    let parsedErrors = formErrors
-    if (parse) {
-      parsedErrors = dot.dot(formErrors)
-    }
+  const setFormErrors = useCallback(
+    (formErrors: object, parse = true) => {
+      let parsedErrors = formErrors
+      if (parse) {
+        parsedErrors = dot.dot(formErrors)
+      }
 
-    setErrors(parsedErrors)
-  }, [])
+      setErrors(parsedErrors)
+    },
+    [setErrors]
+  )
 
   const parseFormData = useCallback(() => {
     const data = {}
@@ -135,9 +155,12 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
     }
   }, [])
 
-  const clearFieldError = useCallback((fieldName: string) => {
-    setErrors(state => ({ ...state, [fieldName]: undefined }))
-  }, [])
+  const clearFieldError = useCallback(
+    (fieldName: string) => {
+      setFieldError(fieldName, undefined)
+    },
+    [setFieldError]
+  )
 
   useImperativeHandle<{}, FormHandles>(formRef, () => ({
     getFieldValue(fieldName) {
@@ -162,7 +185,7 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
       return errors[fieldName]
     },
     setFieldError(fieldName, error) {
-      setErrors(state => ({ ...state, [fieldName]: error }))
+      setFieldError(fieldName, error)
     },
     clearField(fieldName) {
       const field = getFieldByName(fieldName)

@@ -53,5 +53,10 @@ export interface FormProps extends Omit<HTMLFormProps, 'onSubmit'> {
     children: ReactNode;
     onSubmit: SubmitHandler;
 }
+export declare type StoreErrors = {
+    errors: UnformErrors | object;
+    setErrors: (errors: UnformErrors | object) => void;
+    setFieldError: (fieldname: string, error: string | object) => void;
+};
 export {};
 //# sourceMappingURL=types.d.ts.map
