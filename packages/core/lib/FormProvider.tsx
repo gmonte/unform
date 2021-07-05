@@ -28,8 +28,8 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
       create<StoreErrors>(set => ({
         errors: {},
         setErrors: errors => set(() => ({ errors })),
-        setFieldError: (id, value) =>
-          set(({ errors }) => ({ errors: { ...errors, [id]: value } })),
+        setFieldError: (fieldName, error) =>
+          set(({ errors }) => ({ errors: { ...errors, [fieldName]: error } })),
       })),
     []
   )
@@ -223,18 +223,28 @@ const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
     },
   }))
 
+  const providerValue = useMemo(
+    () => ({
+      initialData,
+      errors,
+      scopePath: '',
+      registerField,
+      unregisterField,
+      clearFieldError,
+      handleSubmit,
+    }),
+    [
+      clearFieldError,
+      errors,
+      handleSubmit,
+      initialData,
+      registerField,
+      unregisterField,
+    ]
+  )
+
   return (
-    <FormContext.Provider
-      value={{
-        initialData,
-        errors,
-        scopePath: '',
-        registerField,
-        unregisterField,
-        clearFieldError,
-        handleSubmit,
-      }}
-    >
+    <FormContext.Provider value={providerValue}>
       {children}
     </FormContext.Provider>
   )

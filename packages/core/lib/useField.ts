@@ -40,11 +40,14 @@ export function useField(name: string) {
     unregisterField,
   ])
 
-  return {
-    fieldName,
-    registerField,
-    defaultValue,
-    clearError,
-    error,
-  }
+  return useMemo(
+    () => ({
+      fieldName,
+      registerField,
+      defaultValue,
+      clearError,
+      error,
+    }),
+    [clearError, defaultValue, error, fieldName, registerField]
+  )
 }
