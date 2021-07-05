@@ -27,7 +27,8 @@
     "url": "https://github.com/unform/unform/issues"
   },
   "dependencies": {
-    "dot-object": "^2.1.4"
+    "dot-object": "^2.1.4",
+    "zustand": "^3.5.5"
   },
   "devDependencies": {},
   "peerDependencies": {

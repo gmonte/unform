@@ -13,6 +13,8 @@ import dot from 'dot-object'
 import { FormContext } from './Context'
 import { UnformErrors, UnformField, FormHandles, FormProps } from './types'
 
+console.log('UNFORM FROM GITHUB!!')
+
 const Form: ForwardRefRenderFunction<FormHandles, FormProps> = (
   { initialData = {}, children, onSubmit },
   formRef
